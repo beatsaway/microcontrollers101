@@ -1,11 +1,11 @@
 Microcontrollers101 → GitHub cheat sheet
 Repo: https://github.com/beatsaway/microcontrollers101
-Folder: /Users/staff/Downloads/microcontrollers101
+Folder: /Users/staff/Desktop/progress lessons/microcontrollers101
 
 --------------------------------
 1. Go to the project folder
 --------------------------------
-cd "/Users/staff/Downloads/microcontrollers101"
+cd "/Users/staff/Desktop/progress lessons/microcontrollers101"
 
 --------------------------------
 2. See what changed
@@ -30,12 +30,12 @@ git push
 --------------------------------
 Quick one-liner
 --------------------------------
-cd "/Users/staff/Downloads/microcontrollers101" && git add -A && git status && git commit -m "Update microcontrollers pages" && git push
+cd "/Users/staff/Desktop/progress lessons/microcontrollers101" && git add -A && git status && git commit -m "Update microcontrollers pages" && git push
 
 --------------------------------
 Before you edit (optional)
 --------------------------------
-cd "/Users/staff/Downloads/microcontrollers101" && git pull
+cd "/Users/staff/Desktop/progress lessons/microcontrollers101" && git pull
 
 --------------------------------
 If git push asks you to log in
