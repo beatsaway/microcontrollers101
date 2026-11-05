@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lesson 0 · What a machine is for</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{background:#fff;color:#1c1c1c;font-family:system-ui,"Segoe UI",sans-serif;
+  -webkit-font-smoothing:antialiased}
+button,textarea{font:inherit;color:inherit}
+a{color:#1c1c1c}
+.screen{max-width:880px;margin:0 auto;padding:40px 28px 48px}
+.screen[hidden]{display:none !important}
+h1{margin:0 0 22px;font-size:26px;line-height:1.35;font-weight:700;letter-spacing:-.015em}
+.sentence{margin:0;font-size:22px;line-height:2.05}
+.blank{display:inline-flex;align-items:center;justify-content:center;min-width:6.5rem;
+  min-height:1.9rem;margin:0 3px;padding:2px 8px;vertical-align:middle;
+  border-radius:8px;background:#f2f2f2}
+.blank.good{background:#c8efd4}
+.blank.bad{background:#f6c1c1}
+.bank{display:flex;flex-wrap:wrap;gap:8px;margin-top:28px;min-height:48px}
+.chip{border:1px solid #e4e4e4;background:#fff;border-radius:999px;padding:8px 14px;
+  font-size:15.5px;line-height:1.25;cursor:grab;max-width:100%;text-align:left;touch-action:none}
+.chip.locked{cursor:default}
+.chip.floating{position:fixed;z-index:5;pointer-events:none;margin:0;box-shadow:0 6px 16px rgba(0,0,0,.08)}
+.slots{display:grid;gap:10px}
+.slot{display:grid;grid-template-columns:7rem 1fr;gap:12px;align-items:center}
+.role{font-size:13px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#8a8a8a}
+.slot .blank{display:flex;min-height:46px;width:100%;margin:0;justify-content:flex-start}
+.watch{margin:0 0 28px;font-size:22px;font-weight:700}
+.watch a{color:#1c1c1c}
+.qs{display:grid;gap:16px}
+.qs label{display:grid;gap:8px;font-size:17px;line-height:1.4;font-weight:700}
+.qs textarea{font-weight:400;font-size:16px;line-height:1.4;padding:10px 12px;
+  border:1px solid #e4e4e4;border-radius:10px;background:#fff;min-height:72px;resize:vertical}
+.done{margin:28px 0 0;font-size:18px;line-height:1.5}
+@media (max-width:800px){
+  .sentence{font-size:18px}
+  .slot{grid-template-columns:1fr}
+  .screen{padding:48px 16px 36px}
+}
+</style></head>
+<body>
+<section class="screen" data-part="fill">
+  <div class="sentence" id="sentence"></div>
+  <div class="bank" id="wordBank"></div>
+</section>
+
+<section class="screen" data-part="match" hidden>
+  <h1 id="ask"></h1>
+  <div class="slots" id="slots"></div>
+  <div class="bank" id="phraseBank"></div>
+</section>
+
+<section class="screen" data-part="watch" hidden>
+  <p class="watch"><a href="https://www.youtube.com/shorts/C817esrtUQ4" target="_blank" rel="noopener">Watch the video</a></p>
+  <div class="qs" id="questions"></div>
+  <p class="done">Congratulations. You have gone through all the key concepts of this lesson. Now it is time to build something with Arduino, a microcontroller! Let's learn how to setup a basic output LED to go blink blink. Visit <a href="https://luacas.pages.dev/" target="_blank" rel="noopener">https://luacas.pages.dev/</a> Arduino101 lesson 'Blink an LED'</p>
+</section>
+<script>
+(function () {
+  var DATA = {"sentence": [{"t": "A "}, {"b": "microcontroller"}, {"t": " is a "}, {"b": "mini"}, {"t": " computer that can "}, {"b": "process"}, {"t": " "}, {"b": "inputs"}, {"t": " from "}, {"b": "sensors"}, {"t": " (like a heat sensor or a light sensor) or "}, {"b": "controllers"}, {"t": " (like a mouse, buttons, a joystick or a knob) and do "}, {"b": "outputs"}, {"t": " (like speakers, a screen, a printer, LED lights, a radio signal, Wi-Fi signals, motors, a heater or a cooler). Microcontrollers can be used to make smart devices, systems, gadgets and tools to help people solve "}, {"b": "problems"}, {"t": "."}], "machines": [{"name": "Microwave", "ask": "How does a microwave work? What inputs does it process? What output does it do? What problem does it solve?", "slots": [{"role": "Input", "answer": "The timer knob"}, {"role": "Process", "answer": "If the timer is up, turn off the power"}, {"role": "Output", "answer": "Power the microwave and rotate the dish"}, {"role": "Problem", "answer": "People have little time to cook meals themselves"}]}, {"name": "Washing machine", "ask": "How does a washing machine work? What inputs does it process? What output does it do? What problem does it solve?", "slots": [{"role": "Input", "answer": "The programme knob"}, {"role": "Process", "answer": "If a programme is chosen, run those wash steps"}, {"role": "Output", "answer": "The drum turns and the water moves in and out"}, {"role": "Problem", "answer": "Washing clothes by hand takes a long time"}]}, {"name": "Automatic door", "ask": "How does an automatic door work? What inputs does it process? What output does it do? What problem does it solve?", "slots": [{"role": "Input", "answer": "A sensor that notices a person"}, {"role": "Process", "answer": "If someone is close, tell the motor to open"}, {"role": "Output", "answer": "The door swings or slides open"}, {"role": "Problem", "answer": "People with full hands cannot pull the door"}]}, {"name": "Air conditioner", "ask": "How does an air conditioner work? What inputs does it process? What output does it do? What problem does it solve?", "slots": [{"role": "Input", "answer": "A heat sensor, and the temperature on the knob"}, {"role": "Process", "answer": "If the room is warmer than the setting, switch the cooler on"}, {"role": "Output", "answer": "Cold air blows into the room"}, {"role": "Problem", "answer": "A hot room is hard to work or sleep in"}]}, {"name": "Kettle", "ask": "How does a kettle work? What inputs does it process? What output does it do? What problem does it solve?", "slots": [{"role": "Input", "answer": "The switch, and a heat sensor"}, {"role": "Process", "answer": "If the water boils, turn the power off"}, {"role": "Output", "answer": "The element heats the water, then clicks off"}, {"role": "Problem", "answer": "People want hot water without watching the pot"}]}], "questions": ["Which design do you think could be the most useful? Why?", "What inputs does it process? What output does it do? What problem does it solve?"]};
+  var screens = ["fill"];
+  DATA.machines.forEach(function (_, i) { screens.push("match:" + i); });
+  screens.push("watch");
+  var at = 0;
+  var drag = null;
+  var advanceTimer = 0;
+  var audioCtx = null;
+
+  function audio() {
+    var AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return null;
+    if (!audioCtx) audioCtx = new AC();
+    if (audioCtx.state === "suspended") audioCtx.resume();
+    return audioCtx;
+  }
+
+  function tone(freq, dur, type, peak, delay) {
+    var ac = audio();
+    if (!ac) return;
+    var t = ac.currentTime + (delay || 0);
+    var osc = ac.createOscillator();
+    var gain = ac.createGain();
+    osc.type = type || "sine";
+    osc.frequency.setValueAtTime(freq, t);
+    gain.gain.setValueAtTime(0.0001, t);
+    gain.gain.exponentialRampToValueAtTime(Math.max(peak, 0.0002), t + 0.012);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    osc.connect(gain);
+    gain.connect(ac.destination);
+    osc.start(t);
+    osc.stop(t + dur + 0.02);
+  }
+
+  function playClick() {
+    try { tone(740, 0.045, "sine", 0.06); } catch (e) {}
+  }
+
+  function playCorrect(done) {
+    try {
+      tone(659.25, 0.09, "sine", 0.07);
+      tone(880, 0.16, "sine", 0.055, 0.055);
+      if (done) tone(1174.66, 0.28, "triangle", 0.05, 0.12);
+    } catch (e) {}
+  }
+
+  function playWrong() {
+    try {
+      var ac = audio();
+      if (!ac) return;
+      var t = ac.currentTime;
+      var osc = ac.createOscillator();
+      var gain = ac.createGain();
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(196, t);
+      osc.frequency.exponentialRampToValueAtTime(146, t + 0.11);
+      gain.gain.setValueAtTime(0.0001, t);
+      gain.gain.exponentialRampToValueAtTime(0.03, t + 0.012);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.13);
+      osc.connect(gain);
+      gain.connect(ac.destination);
+      osc.start(t);
+      osc.stop(t + 0.16);
+    } catch (e) {}
+  }
+
+  var sentence = document.getElementById("sentence");
+  var wordBank = document.getElementById("wordBank");
+  var slots = document.getElementById("slots");
+  var phraseBank = document.getElementById("phraseBank");
+
+  function shuffle(list) {
+    var a = list.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  }
+
+  function chip(id, label) {
+    var b = document.createElement("button");
+    b.type = "button";
+    b.className = "chip";
+    b.dataset.id = id;
+    b.textContent = label;
+    return b;
+  }
+
+  function buildFill() {
+    var words = [];
+    DATA.sentence.forEach(function (part) {
+      if (part.t) sentence.appendChild(document.createTextNode(part.t));
+      if (part.b) {
+        var gap = document.createElement("span");
+        gap.className = "blank";
+        gap.dataset.accept = part.b;
+        sentence.appendChild(gap);
+        words.push(part.b);
+      }
+    });
+    shuffle(words).forEach(function (w) { wordBank.appendChild(chip(w, w)); });
+  }
+
+  function machineIndex() {
+    var name = screens[at];
+    return name.indexOf("match:") === 0 ? Number(name.slice(6)) : -1;
+  }
+
+  function buildMatch(i) {
+    var m = DATA.machines[i];
+    document.getElementById("ask").textContent = m.ask;
+    slots.innerHTML = "";
+    phraseBank.innerHTML = "";
+    var phrases = [];
+    m.slots.forEach(function (s) {
+      var row = document.createElement("div");
+      row.className = "slot";
+      var role = document.createElement("div");
+      role.className = "role";
+      role.textContent = s.role;
+      var gap = document.createElement("div");
+      gap.className = "blank";
+      gap.dataset.accept = s.answer;
+      row.appendChild(role);
+      row.appendChild(gap);
+      slots.appendChild(row);
+      phrases.push(s.answer);
+    });
+    shuffle(phrases).forEach(function (p) { phraseBank.appendChild(chip(p, p)); });
+  }
+
+  function buildQuestions() {
+    var box = document.getElementById("questions");
+    DATA.questions.forEach(function (q, i) {
+      var label = document.createElement("label");
+      label.appendChild(document.createTextNode(q));
+      var area = document.createElement("textarea");
+      var saved = "";
+      try { saved = sessionStorage.getItem("lesson0-q" + i) || ""; } catch (e) {}
+      area.value = saved;
+      area.addEventListener("input", function () {
+        try { sessionStorage.setItem("lesson0-q" + i, area.value); } catch (e) {}
+      });
+      label.appendChild(area);
+      box.appendChild(label);
+    });
+  }
+
+  function show(n) {
+    window.clearTimeout(advanceTimer);
+    at = n;
+    var name = screens[at];
+    document.querySelectorAll(".screen").forEach(function (el) { el.hidden = true; });
+    var part = name.indexOf("match:") === 0 ? "match" : name;
+    document.querySelector('[data-part="' + part + '"]').hidden = false;
+    if (part === "match") buildMatch(machineIndex());
+  }
+
+  function screenOf(node) {
+    return node && node.closest ? node.closest(".screen") : null;
+  }
+
+  function bankOf(screen) {
+    return screen ? screen.querySelector(".bank") : null;
+  }
+
+  function rest(el) {
+    el.classList.remove("floating");
+    el.style.left = "";
+    el.style.top = "";
+    el.style.width = "";
+  }
+
+  function place(chipEl, slot, origin) {
+    var from = origin || chipEl.parentElement;
+    if (slot.classList && slot.classList.contains("blank")) {
+      var already = slot.querySelector(".chip");
+      slot.appendChild(chipEl);
+      if (already) {
+        if (from && from.classList.contains("blank")) from.appendChild(already);
+        else bankOf(screenOf(slot) || screenOf(from)).appendChild(already);
+      }
+    } else {
+      slot.appendChild(chipEl);
+    }
+    rest(chipEl);
+  }
+
+  function gradeBlank(blank) {
+    if (!blank || !blank.classList.contains("blank")) return "";
+    var was = blank.classList.contains("good") ? "good" : (blank.classList.contains("bad") ? "bad" : "");
+    var c = blank.querySelector(".chip");
+    blank.classList.remove("good", "bad");
+    if (!c) return "";
+    if (c.dataset.id === blank.dataset.accept) {
+      blank.classList.add("good");
+      c.classList.add("locked");
+      return was === "good" ? "" : "good";
+    }
+    c.classList.remove("locked");
+    blank.classList.add("bad");
+    return was === "bad" ? "" : "bad";
+  }
+
+  function screenDone(screen) {
+    if (!screen || screen.dataset.part === "watch") return false;
+    var blanks = screen.querySelectorAll(".blank");
+    if (!blanks.length) return false;
+    for (var i = 0; i < blanks.length; i++) {
+      var c = blanks[i].querySelector(".chip");
+      if (!c || c.dataset.id !== blanks[i].dataset.accept) return false;
+    }
+    return true;
+  }
+
+  function maybeAdvance(screen) {
+    window.clearTimeout(advanceTimer);
+    if (!screen || screen.dataset.part === "watch") return;
+    var blanks = screen.querySelectorAll(".blank");
+    if (!blanks.length) return;
+    for (var i = 0; i < blanks.length; i++) {
+      var c = blanks[i].querySelector(".chip");
+      if (!c || c.dataset.id !== blanks[i].dataset.accept) return;
+    }
+    advanceTimer = window.setTimeout(function () {
+      if (at < screens.length - 1) show(at + 1);
+    }, 700);
+  }
+
+  function finish(el, origin, target) {
+    var fromBlank = origin && origin.classList && origin.classList.contains("blank") ? origin : null;
+    var home = origin;
+    if (!home || !home.classList || (!home.classList.contains("blank") && !home.classList.contains("bank"))) {
+      home = bankOf(screenOf(origin)) || wordBank;
+    }
+    if (target && target.classList.contains("blank")) {
+      var sitting = target.querySelector(".chip");
+      if (sitting && sitting.classList.contains("locked") && sitting !== el) place(el, home, origin);
+      else place(el, target, origin);
+    } else if (target && target.classList.contains("bank")) {
+      place(el, target, origin);
+    } else {
+      place(el, home, origin);
+    }
+    if (fromBlank && fromBlank !== el.parentElement) gradeBlank(fromBlank);
+    var now = el.parentElement;
+    var dropped = now && now.classList.contains("blank") ? gradeBlank(now) : "";
+    var screen = screenOf(el) || screenOf(origin);
+    if (dropped === "good") playCorrect(screenDone(screen));
+    else if (dropped === "bad") playWrong();
+    maybeAdvance(screen);
+  }
+
+  document.addEventListener("pointerdown", function (e) {
+    var el = e.target.closest(".chip");
+    if (!el || el.classList.contains("locked")) return;
+    playClick();
+    drag = { chip: el, origin: el.parentElement, x: e.clientX, y: e.clientY,
+             moved: false, ptr: e.pointerId };
+    try { el.setPointerCapture(e.pointerId); } catch (err) {}
+  });
+
+  document.addEventListener("pointermove", function (e) {
+    if (!drag || e.pointerId !== drag.ptr) return;
+    if (!drag.moved && Math.hypot(e.clientX - drag.x, e.clientY - drag.y) < 6) return;
+    drag.moved = true;
+    var el = drag.chip;
+    if (!el.classList.contains("floating")) {
+      var r = el.getBoundingClientRect();
+      el.classList.add("floating");
+      el.style.width = r.width + "px";
+      document.body.appendChild(el);
+    }
+    el.style.left = (e.clientX - 24) + "px";
+    el.style.top = (e.clientY - 18) + "px";
+  });
+
+  document.addEventListener("pointerup", function (e) {
+    if (!drag || e.pointerId !== drag.ptr) return;
+    var el = drag.chip;
+    var origin = drag.origin;
+    var moved = drag.moved;
+    drag = null;
+    if (!moved) return;
+    el.style.visibility = "hidden";
+    var under = document.elementFromPoint(e.clientX, e.clientY);
+    el.style.visibility = "";
+    var blank = under && under.closest(".blank");
+    var bank = under && under.closest(".bank");
+    finish(el, origin, blank || bank || null);
+  });
+
+  buildFill();
+  buildQuestions();
+  show(0);
+})();
+</script>
+</body></html>
