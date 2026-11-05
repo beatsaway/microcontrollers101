@@ -1,0 +1,51 @@
+Microcontrollers101 → GitHub cheat sheet
+Repo: https://github.com/beatsaway/microcontrollers101
+Folder: /Users/staff/Downloads/microcontrollers101
+
+--------------------------------
+1. Go to the project folder
+--------------------------------
+cd "/Users/staff/Downloads/microcontrollers101"
+
+--------------------------------
+2. See what changed
+--------------------------------
+git status
+
+--------------------------------
+3. Stage files
+--------------------------------
+git add -A
+
+--------------------------------
+4. Commit
+--------------------------------
+git commit -m "Short message about why you changed things"
+
+--------------------------------
+5. Push to GitHub
+--------------------------------
+git push
+
+--------------------------------
+Quick one-liner
+--------------------------------
+cd "/Users/staff/Downloads/microcontrollers101" && git add -A && git status && git commit -m "Update microcontrollers pages" && git push
+
+--------------------------------
+Before you edit (optional)
+--------------------------------
+cd "/Users/staff/Downloads/microcontrollers101" && git pull
+
+--------------------------------
+If git push asks you to log in
+--------------------------------
+gh auth login
+(Use GitHub.com → HTTPS → Login with a web browser)
+
+--------------------------------
+Useful checks
+--------------------------------
+git status
+git log -3 --oneline
+git pull
